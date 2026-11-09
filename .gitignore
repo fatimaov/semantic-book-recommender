@@ -22,3 +22,6 @@ chroma_db/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Cleaned dataset
+data/*
