@@ -6,8 +6,9 @@ A learning project that prepares book descriptions and searches them by meaning 
 
 - `data-exploration.ipynb` downloads the 7k Books with Metadata dataset from Kaggle, cleans it, and writes `data/books_cleaned.csv`.
 - `vector-search.ipynb` turns each book description into an embedding, stores the vectors in `chroma_db/`, and searches them with natural-language queries.
+- `text-classification.ipynb` maps common categories to broader labels and uses a zero-shot classifier to label books with unmapped categories as Fiction or Nonfiction. It evaluates the model on a sample and writes `data/books_with_categories.csv`.
 
-Run the notebooks in that order. The cleaned CSV and Chroma database are local generated files and are not tracked by Git.
+Run `data-exploration.ipynb` first. Then run `vector-search.ipynb` and/or `text-classification.ipynb`; both use `data/books_cleaned.csv`. The generated CSV files and Chroma database are local and are not tracked by Git.
 
 ## Setup
 
@@ -18,9 +19,9 @@ Run the notebooks in that order. The cleaned CSV and Chroma database are local g
    pip install -r requirements.txt
    ```
 
-3. Start Jupyter and run `data-exploration.ipynb` from top to bottom, then `vector-search.ipynb`.
+3. Start Jupyter and run the notebooks from top to bottom, beginning with `data-exploration.ipynb`.
 
-The vector search downloads the `BAAI/bge-base-en-v1.5` embedding model on first use. Dataset download requires KaggleHub access.
+Vector search downloads the `BAAI/bge-base-en-v1.5` embedding model on first use. Text classification uses Hugging Face Transformers and `facebook/bart-large-mnli`; its notebook is configured to use a CUDA-enabled NVIDIA GPU. Dataset download requires KaggleHub access.
 
 ## Current scope
 
