@@ -70,12 +70,12 @@ def recommend_books(
     # Convert each recommended book into a thumbnail and caption for the gallery.
     recommendations = retrieve_semantic_recommendations(query, category, tone)
     results = []
+    descriptions = []
 
     for _, row in recommendations.iterrows():
         description = row["description"]
-        # Keep captions compact by showing only the first 20 description words.
-        truncated_desc_split = description.split()
-        truncated_description = " ".join(truncated_desc_split[:20]) + "..."
+        description = "" if pd.isna(description) else str(description)
+        descriptions.append(description)
 
         # Format author names naturally when the metadata lists multiple authors.
         authors_split = row["authors"].split(";")
@@ -86,16 +86,28 @@ def recommend_books(
         else:
             authors_str = row["authors"]
 
-        caption = f"{row['title']} by {authors_str}: {truncated_description}"
+        caption = f"{row['title']} by {authors_str}"
         results.append((row["large_thumbnail"], caption))
-    return results
+    # Clear the description whenever a fresh set of recommendations is loaded.
+    return results, descriptions, "Select a recommended book to read its full description."
+
+
+def show_selected_description(descriptions, evt: gr.SelectData):
+    # Read the description at the position selected in the recommendations gallery.
+    index = evt.index
+    index = index[0] if isinstance(index, (tuple, list)) else index
+    if not descriptions:
+        return "No description is available for this book."
+    if index < 0 or index >= len(descriptions):
+        return "No description is available for this book."
+    return descriptions[index] or "No description is available for this book."
 
 categories = ["All"] + sorted(books["simple_categories"].unique())
 tones = ["All"] + ["Happy", "Surprising", "Angry", "Suspenseful", "Sad"]
 
 # Build the search form and connect its button to the recommendation function.
 with gr.Blocks(theme=gr.Theme.from_hub("bencw/soft-no-dark-theme")) as dashboard:
-    gr.Markdown("# Semantic book recommender")
+    gr.Markdown("# Semantic Book Recommender")
 
     with gr.Row():
         user_query = gr.Textbox(label = "Please enter a description of a book:",
@@ -106,10 +118,15 @@ with gr.Blocks(theme=gr.Theme.from_hub("bencw/soft-no-dark-theme")) as dashboard
 
     gr.Markdown("## Recommendations")
     output = gr.Gallery(label = "Recommended books", columns = 8, rows = 2)
+    recommendations_state = gr.State([])
+    full_description = gr.Textbox(label="Full description", lines=8, interactive=False)
 
     submit_button.click(fn = recommend_books,
                         inputs = [user_query, category_dropdown, tone_dropdown],
-                        outputs = output)
+                        outputs = [output, recommendations_state, full_description])
+    output.select(fn=show_selected_description,
+                  inputs=[recommendations_state],
+                  outputs=full_description)
 
 if __name__ == "__main__":
     dashboard.launch()
