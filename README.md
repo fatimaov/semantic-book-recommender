@@ -1,39 +1,41 @@
 # Semantic Book Recommender
 
-A learning project that prepares book descriptions and searches them by meaning using text embeddings and ChromaDB.
+A learning exercise based on a freeCodeCamp tutorial [Build a Semantic Book Recommender Using an LLM and Python — freeCodeCamp](https://www.freecodecamp.org/news/build-a-semantic-book-recommender-using-an-llm-and-python/). It explores book metadata, creates semantic vectors from book descriptions, classifies books by category and emotion, and uses those results in a Gradio recommendation dashboard.
 
-## Notebooks
+## Tech stack
 
-- `data-exploration.ipynb` downloads the 7k Books with Metadata dataset from Kaggle, cleans it, and writes `data/books_cleaned.csv`.
-- `vector-search.ipynb` turns each book description into an embedding, stores the vectors in `chroma_db/`, and searches them with natural-language queries.
-- `text-classification.ipynb` maps common categories to broader labels and uses a zero-shot classifier to label books with unmapped categories as Fiction or Nonfiction. It evaluates the model on a sample and writes `data/books_with_categories.csv`.
-- `sentiment-analysis.ipynb` runs the `j-hartmann/emotion-english-distilroberta-base` classifier on each sentence in every book description, takes the maximum sentence score for each emotion, joins the scores to the books by ISBN, and writes `data/books_with_emotions.csv`. The export drops the intermediate `C15`–`C31` columns.
+Python, Jupyter, Pandas, Hugging Face Transformers and Sentence Transformers, LangChain, ChromaDB, and Gradio.
 
-## Recommended notebook run order
+## Notebooks and app
 
-1. Run `data-exploration.ipynb` to create `data/books_cleaned.csv`.
-2. Run `vector-search.ipynb` and/or `text-classification.ipynb`. Both use the cleaned CSV, so either can run next. The text classification notebook creates `data/books_with_categories.csv`.
-3. To generate emotion scores, run `sentiment-analysis.ipynb` after text classification. It reads `data/books_with_categories.csv` and writes `data/books_with_emotions.csv`.
+- `data-exploration.ipynb` downloads the 7k Books with Metadata dataset, explores and cleans it, and saves `data/books_cleaned.csv`.
+- `vector-search.ipynb` prepares ISBN-tagged descriptions, creates/reuses the `books` Chroma collection in `chroma_db/`, and demonstrates semantic retrieval.
+- `text-classification.ipynb` maps detailed genres to broader categories and uses zero-shot classification for unmapped books. Saves `data/books_with_categories.csv`.
+- `sentiment-analysis.ipynb` scores description sentences for emotions and saves `data/books_with_emotions.csv`.
+- `gradio-dashboard.py` retrieves books from the persisted Chroma collection and filters or ranks recommendations by category and emotional tone.
 
-The generated CSV files and Chroma database are local and are not tracked by Git.
+## Notebook run order
 
-## Setup
+1. `data-exploration.ipynb`
+2. `vector-search.ipynb` and `text-classification.ipynb` (either order; both use `books_cleaned.csv`)
+3. `sentiment-analysis.ipynb` (uses `books_with_categories.csv`)
+4. Run the dashboard with `python gradio-dashboard.py` after the vector collection and emotion CSV are available.
 
-1. Create and activate a Python environment.
-2. Install dependencies:
+## Setup and model notes
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+Create and activate a Python environment, then install dependencies and start Jupyter:
 
-3. Start Jupyter and follow the recommended notebook run order above.
+```bash
+pip install -r requirements.txt
+jupyter notebook
+```
 
-The notebooks download their Hugging Face models on first use: `BAAI/bge-base-en-v1.5` for vector search, `facebook/bart-large-mnli` for category classification, and `j-hartmann/emotion-english-distilroberta-base` for emotion scoring. Text classification and sentiment analysis use CUDA device 0, so both require a CUDA-enabled NVIDIA GPU. Dataset download requires KaggleHub access.
+Run the notebooks in order above. The first notebook downloads the dataset through KaggleHub. Hugging Face downloads these models on first use:
 
-## Current scope
+- `BAAI/bge-base-en-v1.5` for book and query embeddings
+- `facebook/bart-large-mnli` for zero-shot Fiction/Nonfiction classification
+- `j-hartmann/emotion-english-distilroberta-base` for emotion scores
 
-Semantic retrieval is implemented as a notebook prototype. The recommendation helper fetches up to 50 similar books; it does not yet use its `top_k` argument or return results in similarity order. There is no application interface or LLM-based recommendation step yet.
+The two classification notebooks specify `device=0`, which requires a compatible CUDA-enabled NVIDIA GPU and PyTorch CUDA installation. For CPU use, change `device=0` to `device=-1` in those notebooks; inference will be slower. The dashboard uses the same embedding model and existing Chroma vectors, so it does not need to ingest or embed all book descriptions again.
 
-## Learning resource
-
-[Build a Semantic Book Recommender Using an LLM and Python](https://www.freecodecamp.org/news/build-a-semantic-book-recommender-using-an-llm-and-python/)
+Generated CSV files and the Chroma database are local and are not tracked by Git.
