@@ -93,19 +93,31 @@ def recommend_books(
 categories = ["All"] + sorted(books["simple_categories"].unique())
 tones = ["All"] + ["Happy", "Surprising", "Angry", "Suspenseful", "Sad"]
 
-# Build the search form and connect its button to the recommendation function.
-with gr.Blocks(theme=gr.Theme.from_hub("bencw/soft-no-dark-theme")) as dashboard:
-    gr.Markdown("# Semantic book recommender")
+# Build a responsive search form and connect it to the recommendation function.
+dashboard_css = """
+.gradio-container {max-width: 1100px !important; margin: auto !important;}
+#search-controls {padding: 1rem; border: 1px solid var(--border-color-primary); border-radius: 16px;}
+"""
 
-    with gr.Row():
-        user_query = gr.Textbox(label = "Please enter a description of a book:",
-                                placeholder = "e.g., A story about forgiveness")
-        category_dropdown = gr.Dropdown(choices = categories, label = "Select a category:", value = "All")
-        tone_dropdown = gr.Dropdown(choices = tones, label = "Select an emotional tone:", value = "All")
-        submit_button = gr.Button("Find recommendations")
+with gr.Blocks(
+    theme=gr.Theme.from_hub("bencw/soft-no-dark-theme"),
+    css=dashboard_css,
+) as dashboard:
+    gr.Markdown("# Find your next favorite book\nDescribe a story, topic, or mood and explore books that match.")
+
+    with gr.Column(elem_id="search-controls"):
+        user_query = gr.Textbox(
+            label="What kind of book are you looking for?",
+            placeholder="e.g., A story about forgiveness",
+            lines=2,
+        )
+        with gr.Row():
+            category_dropdown = gr.Dropdown(choices=categories, label="Category", value="All")
+            tone_dropdown = gr.Dropdown(choices=tones, label="Mood", value="All")
+        submit_button = gr.Button("Find recommendations", variant="primary")
 
     gr.Markdown("## Recommendations")
-    output = gr.Gallery(label = "Recommended books", columns = 8, rows = 2)
+    output = gr.Gallery(label="Books selected for you", columns=(1, 2, 4), rows=2)
 
     submit_button.click(fn = recommend_books,
                         inputs = [user_query, category_dropdown, tone_dropdown],
