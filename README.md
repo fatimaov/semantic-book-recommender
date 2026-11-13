@@ -2,6 +2,9 @@
 
 A semantic book discovery app that finds recommendations from natural-language descriptions, then lets readers narrow results by genre and emotional tone. It combines Python, Hugging Face language models, LangChain, and ChromaDB for semantic search, with a Gradio dashboard for exploring the recommendations.
 
+
+![Semantic Book Recommender demo](semantic-book-recommender_demo.gif)
+
 ## Tech stack
 
 Python, Jupyter, Pandas, Hugging Face Transformers and Sentence Transformers, LangChain, ChromaDB, and Gradio.
