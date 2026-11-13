@@ -106,15 +106,24 @@ categories = ["All"] + sorted(books["simple_categories"].unique())
 tones = ["All"] + ["Happy", "Surprising", "Angry", "Suspenseful", "Sad"]
 
 # Build the search form and connect its button to the recommendation function.
-with gr.Blocks(theme=gr.Theme.from_hub("bencw/soft-no-dark-theme")) as dashboard:
-    gr.Markdown("# Semantic Book Recommender")
+with gr.Blocks(theme=gr.Theme.from_hub("harsh8001/skymist")) as dashboard:
+    gr.Markdown("# Semantic Book Recommender", elem_id="dashboard-title")
+
+    user_query = gr.Textbox(label="Please enter a description of a book:",
+                            placeholder="e.g., A story about forgiveness")
 
     with gr.Row():
-        user_query = gr.Textbox(label = "Please enter a description of a book:",
-                                placeholder = "e.g., A story about forgiveness")
-        category_dropdown = gr.Dropdown(choices = categories, label = "Select a category:", value = "All")
-        tone_dropdown = gr.Dropdown(choices = tones, label = "Select an emotional tone:", value = "All")
-        submit_button = gr.Button("Find recommendations")
+        with gr.Column(scale=1):
+            with gr.Row():
+                category_dropdown = gr.Dropdown(choices=categories,
+                                                label="Select a category:",
+                                                value="All")
+                tone_dropdown = gr.Dropdown(choices=tones,
+                                            label="Select an emotional tone:",
+                                            value="All")
+
+    with gr.Row():
+        submit_button = gr.Button("Find recommendations", scale=1, min_width=0)
 
     gr.Markdown("## Recommendations")
     output = gr.Gallery(label = "Recommended books", columns = 8, rows = 2)
@@ -129,4 +138,9 @@ with gr.Blocks(theme=gr.Theme.from_hub("bencw/soft-no-dark-theme")) as dashboard
                   outputs=full_description)
 
 if __name__ == "__main__":
-    dashboard.launch()
+    dashboard.launch(css="""
+        #dashboard-title {
+            margin: 2rem 0 2.5rem;
+            text-align: center;
+        }
+    """)
