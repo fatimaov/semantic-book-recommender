@@ -1,6 +1,6 @@
 # Semantic Book Recommender
 
-A learning exercise based on a freeCodeCamp tutorial [Build a Semantic Book Recommender Using an LLM and Python — freeCodeCamp](https://www.freecodecamp.org/news/build-a-semantic-book-recommender-using-an-llm-and-python/). It explores book metadata, creates semantic vectors from book descriptions, classifies books by category and emotion, and uses those results in a Gradio recommendation dashboard.
+A semantic book discovery app that finds recommendations from natural-language descriptions, then lets readers narrow results by genre and emotional tone. It combines Python, Hugging Face language models, LangChain, and ChromaDB for semantic search, with a Gradio dashboard for exploring the recommendations.
 
 ## Tech stack
 
@@ -39,3 +39,7 @@ Run the notebooks in order above. The first notebook downloads the dataset throu
 The two classification notebooks specify `device=0`, which requires a compatible CUDA-enabled NVIDIA GPU and PyTorch CUDA installation. For CPU use, change `device=0` to `device=-1` in those notebooks; inference will be slower. The dashboard uses the same embedding model and existing Chroma vectors, so it does not need to ingest or embed all book descriptions again.
 
 Generated CSV files and the Chroma database are local and are not tracked by Git.
+
+## Tutorial
+
+This project is a practice exercise based on freeCodeCamp's [Build a Semantic Book Recommender Using an LLM and Python](https://www.freecodecamp.org/news/build-a-semantic-book-recommender-using-an-llm-and-python/).
