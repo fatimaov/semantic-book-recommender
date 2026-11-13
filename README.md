@@ -7,8 +7,15 @@ A learning project that prepares book descriptions and searches them by meaning 
 - `data-exploration.ipynb` downloads the 7k Books with Metadata dataset from Kaggle, cleans it, and writes `data/books_cleaned.csv`.
 - `vector-search.ipynb` turns each book description into an embedding, stores the vectors in `chroma_db/`, and searches them with natural-language queries.
 - `text-classification.ipynb` maps common categories to broader labels and uses a zero-shot classifier to label books with unmapped categories as Fiction or Nonfiction. It evaluates the model on a sample and writes `data/books_with_categories.csv`.
+- `sentiment-analysis.ipynb` runs the `j-hartmann/emotion-english-distilroberta-base` classifier on each sentence in every book description, takes the maximum sentence score for each emotion, joins the scores to the books by ISBN, and writes `data/books_with_emotions.csv`. The export drops the intermediate `C15`–`C31` columns.
 
-Run `data-exploration.ipynb` first. Then run `vector-search.ipynb` and/or `text-classification.ipynb`; both use `data/books_cleaned.csv`. The generated CSV files and Chroma database are local and are not tracked by Git.
+## Recommended notebook run order
+
+1. Run `data-exploration.ipynb` to create `data/books_cleaned.csv`.
+2. Run `vector-search.ipynb` and/or `text-classification.ipynb`. Both use the cleaned CSV, so either can run next. The text classification notebook creates `data/books_with_categories.csv`.
+3. To generate emotion scores, run `sentiment-analysis.ipynb` after text classification. It reads `data/books_with_categories.csv` and writes `data/books_with_emotions.csv`.
+
+The generated CSV files and Chroma database are local and are not tracked by Git.
 
 ## Setup
 
@@ -19,9 +26,9 @@ Run `data-exploration.ipynb` first. Then run `vector-search.ipynb` and/or `text-
    pip install -r requirements.txt
    ```
 
-3. Start Jupyter and run the notebooks from top to bottom, beginning with `data-exploration.ipynb`.
+3. Start Jupyter and follow the recommended notebook run order above.
 
-Vector search downloads the `BAAI/bge-base-en-v1.5` embedding model on first use. Text classification uses Hugging Face Transformers and `facebook/bart-large-mnli`; its notebook is configured to use a CUDA-enabled NVIDIA GPU. Dataset download requires KaggleHub access.
+The notebooks download their Hugging Face models on first use: `BAAI/bge-base-en-v1.5` for vector search, `facebook/bart-large-mnli` for category classification, and `j-hartmann/emotion-english-distilroberta-base` for emotion scoring. Text classification and sentiment analysis use CUDA device 0, so both require a CUDA-enabled NVIDIA GPU. Dataset download requires KaggleHub access.
 
 ## Current scope
 
