@@ -19,16 +19,29 @@ Python, Jupyter, Pandas, Hugging Face Transformers and Sentence Transformers, La
 1. `data-exploration.ipynb`
 2. `vector-search.ipynb` and `text-classification.ipynb` (either order; both use `books_cleaned.csv`)
 3. `sentiment-analysis.ipynb` (uses `books_with_categories.csv`)
-4. Run the dashboard with `python gradio-dashboard.py` after the vector collection and emotion CSV are available.
+4. Run the dashboard with `gradio gradio-dashboard.py` after the vector collection and emotion CSV are available.
 
 ## Setup and model notes
 
-Create and activate a Python environment, then install dependencies and start Jupyter:
+Create and activate a Python environment, then install dependencies:
 
 ```bash
 pip install -r requirements.txt
+```
+
+Run Jupyter to execute the notebooks:
+
+```bash
 jupyter notebook
 ```
+
+After the vector collection and emotion CSV are available, start the Gradio dashboard in reload mode:
+
+```bash
+gradio gradio-dashboard.py
+```
+
+The dashboard is available at `http://127.0.0.1:7860` by default. Gradio reload mode refreshes the app when you save changes.
 
 Run the notebooks in order above. The first notebook downloads the dataset through KaggleHub. Hugging Face downloads these models on first use:
 
