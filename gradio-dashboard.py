@@ -75,7 +75,6 @@ def recommend_books(
     for _, row in recommendations.iterrows():
         description = row["description"]
         description = "" if pd.isna(description) else str(description)
-        descriptions.append(description)
 
         # Format author names naturally when the metadata lists multiple authors.
         authors = row["authors"]
@@ -92,6 +91,8 @@ def recommend_books(
 
         caption = f"{row['title']} by {authors_str}"
         results.append((row["large_thumbnail"], caption))
+        description_text = description if description.strip() else "No description is available for this book."
+        descriptions.append(f"{caption}\n\n{description_text}")
     # Start each search on the first page and retain all matches for navigation.
     page_count = max(1, (len(results) + PAGE_SIZE - 1) // PAGE_SIZE)
     return (
