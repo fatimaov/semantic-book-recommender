@@ -81,13 +81,17 @@ def recommend_books(
         descriptions.append(description)
 
         # Format author names naturally when the metadata lists multiple authors.
-        authors_split = row["authors"].split(";")
-        if len(authors_split) == 2:
-            authors_str = f"{authors_split[0]} and {authors_split[1]}"
-        elif len(authors_split) > 2:
-            authors_str = f"{', '.join(authors_split[:-1])}, and {authors_split[-1]}"
+        authors = row["authors"]
+        if pd.isna(authors) or not str(authors).strip():
+            authors_str = "unknown"
         else:
-            authors_str = row["authors"]
+            authors_split = [author.strip() for author in str(authors).split(";") if author.strip()]
+            if len(authors_split) == 2:
+                authors_str = f"{authors_split[0]} and {authors_split[1]}"
+            elif len(authors_split) > 2:
+                authors_str = f"{', '.join(authors_split[:-1])}, and {authors_split[-1]}"
+            else:
+                authors_str = authors_split[0] if authors_split else "unknown"
 
         caption = f"{row['title']} by {authors_str}"
         results.append((row["large_thumbnail"], caption))
