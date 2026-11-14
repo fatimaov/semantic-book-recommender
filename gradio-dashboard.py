@@ -33,8 +33,7 @@ def retrieve_semantic_recommendations(
         query: str,
         category: str = None,
         tone: str = None,
-        initial_top_k: int = 50,
-        final_top_k: int = 16,
+        initial_top_k: int = 200,
 ) -> pd.DataFrame:
     # Use semantic similarity as the first-stage candidate search, then apply UI filters.
     # Find the nearest book vectors, then extract their ISBNs from stored document text.
@@ -43,11 +42,9 @@ def retrieve_semantic_recommendations(
     # Keep matching metadata rows in their original dataset order.
     book_recs = books[books["isbn13"].isin(books_list)].head(initial_top_k)
 
-    # Optionally narrow results to one category and cap the number returned.
+    # Optionally narrow results to one category while retaining every semantic match.
     if category != "All":
-        book_recs = book_recs[book_recs["simple_categories"] == category].head(final_top_k)
-    else:
-        book_recs = book_recs.head(final_top_k)
+        book_recs = book_recs[book_recs["simple_categories"] == category]
 
     # Rank the selected books by the emotion score requested by the user.
     if tone == "Happy":
@@ -95,15 +92,40 @@ def recommend_books(
 
         caption = f"{row['title']} by {authors_str}"
         results.append((row["large_thumbnail"], caption))
-    # Clear the description whenever a fresh set of recommendations is loaded.
-    return results, descriptions, "Select a recommended book to read its full description."
+    # Start each search on the first page and retain all matches for navigation.
+    page_count = max(1, (len(results) + PAGE_SIZE - 1) // PAGE_SIZE)
+    return (
+        results[:PAGE_SIZE],
+        results,
+        descriptions,
+        0,
+        f"Page 1 of {page_count}",
+        "Select a recommended book to read its full description.",
+        gr.update(interactive=False),
+        gr.update(interactive=page_count > 1),
+    )
 
 
-def show_selected_description(descriptions, evt: gr.SelectData):
+def change_recommendation_page(direction, recommendations, page):
+    # Display the requested 16-item slice and update the available navigation controls.
+    page_count = max(1, (len(recommendations) + PAGE_SIZE - 1) // PAGE_SIZE)
+    page = max(0, min(page + direction, page_count - 1))
+    start = page * PAGE_SIZE
+    return (
+        recommendations[start:start + PAGE_SIZE],
+        page,
+        f"Page {page + 1} of {page_count}",
+        gr.update(interactive=page > 0),
+        gr.update(interactive=page < page_count - 1),
+    )
+
+
+def show_selected_description(descriptions, page, evt: gr.SelectData):
     # Map a gallery selection back to its description, guarding against missing or stale selections.
     # Read the description at the position selected in the recommendations gallery.
     index = evt.index
     index = index[0] if isinstance(index, (tuple, list)) else index
+    index += page * PAGE_SIZE
     if not descriptions:
         return "No description is available for this book."
     if index < 0 or index >= len(descriptions):
@@ -112,6 +134,7 @@ def show_selected_description(descriptions, evt: gr.SelectData):
 
 categories = ["All"] + sorted(books["simple_categories"].unique())
 tones = ["All"] + ["Happy", "Surprising", "Angry", "Suspenseful", "Sad"]
+PAGE_SIZE = 16
 
 # Define the search controls, recommendation gallery, and description panel as one Gradio app.
 # Build the search form and connect its button to the recommendation function.
@@ -137,13 +160,26 @@ with gr.Blocks(theme=gr.Theme.from_hub("harsh8001/skymist")) as dashboard:
     gr.Markdown("## Recommendations")
     output = gr.Gallery(label = "Recommended books", columns = 8, rows = 2)
     recommendations_state = gr.State([])
+    descriptions_state = gr.State([])
+    page_state = gr.State(0)
+    with gr.Row():
+        previous_page = gr.Button("Previous", interactive=False, scale=1)
+        page_indicator = gr.Markdown("Page 1 of 1", elem_id="page-indicator", scale=1)
+        next_page = gr.Button("Next", interactive=False, scale=1)
     full_description = gr.Textbox(label="Full description", lines=8, interactive=False)
 
     submit_button.click(fn = recommend_books,
                         inputs = [user_query, category_dropdown, tone_dropdown],
-                        outputs = [output, recommendations_state, full_description])
+                        outputs = [output, recommendations_state, descriptions_state, page_state,
+                                   page_indicator, full_description, previous_page, next_page])
+    previous_page.click(fn=lambda recommendations, page: change_recommendation_page(-1, recommendations, page),
+                        inputs=[recommendations_state, page_state],
+                        outputs=[output, page_state, page_indicator, previous_page, next_page])
+    next_page.click(fn=lambda recommendations, page: change_recommendation_page(1, recommendations, page),
+                    inputs=[recommendations_state, page_state],
+                    outputs=[output, page_state, page_indicator, previous_page, next_page])
     output.select(fn=show_selected_description,
-                  inputs=[recommendations_state],
+                  inputs=[descriptions_state, page_state],
                   outputs=full_description)
 
 if __name__ == "__main__":
@@ -151,5 +187,9 @@ if __name__ == "__main__":
         #dashboard-title {
             margin: 2rem 0 2.5rem;
             text-align: center;
+        }
+        #page-indicator {
+            text-align: center;
+            align-self: center;
         }
     """)
