@@ -160,7 +160,8 @@ with gr.Blocks(theme=gr.Theme.from_hub("harsh8001/skymist")) as dashboard:
         submit_button = gr.Button("Find recommendations", scale=1, min_width=0)
 
     gr.Markdown("## Recommendations")
-    output = gr.Gallery(label = "Recommended books", columns = 8, rows = 2)
+    output = gr.Gallery(label = "Recommended books", columns = 8, rows = 2,
+                        elem_id="recommendations-gallery")
     recommendations_state = gr.State([])
     descriptions_state = gr.State([])
     page_state = gr.State(0)
@@ -193,5 +194,18 @@ if __name__ == "__main__":
         #page-indicator {
             text-align: center;
             align-self: center;
+        }
+        #recommendations-gallery .grid-container {
+            grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+        }
+        @media (max-width: 900px) {
+            #recommendations-gallery .grid-container {
+                grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+            }
+        }
+        @media (max-width: 600px) {
+            #recommendations-gallery .grid-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
         }
     """)
