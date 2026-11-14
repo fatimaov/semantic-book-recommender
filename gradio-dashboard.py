@@ -6,6 +6,7 @@ from langchain_chroma import Chroma
 
 import gradio as gr
 
+# Prepare display-ready book metadata and reusable vector-search resources at startup.
 # Load the book metadata and build a larger cover URL for display.
 books = pd.read_csv("data/books_with_emotions.csv")
 books["large_thumbnail"] = books["thumbnail"] + "&fife=w800"
@@ -35,6 +36,7 @@ def retrieve_semantic_recommendations(
         initial_top_k: int = 50,
         final_top_k: int = 16,
 ) -> pd.DataFrame:
+    # Use semantic similarity as the first-stage candidate search, then apply UI filters.
     # Find the nearest book vectors, then extract their ISBNs from stored document text.
     recs = db_books.similarity_search(query, k=initial_top_k)
     books_list = [int(rec.page_content.strip('"').split()[0]) for rec in recs]
@@ -67,6 +69,7 @@ def recommend_books(
         category: str,
         tone: str
 ):
+    # Adapt recommendation rows into the two pieces of UI state: gallery cards and descriptions.
     # Convert each recommended book into a thumbnail and caption for the gallery.
     recommendations = retrieve_semantic_recommendations(query, category, tone)
     results = []
@@ -93,6 +96,7 @@ def recommend_books(
 
 
 def show_selected_description(descriptions, evt: gr.SelectData):
+    # Map a gallery selection back to its description, guarding against missing or stale selections.
     # Read the description at the position selected in the recommendations gallery.
     index = evt.index
     index = index[0] if isinstance(index, (tuple, list)) else index
@@ -105,6 +109,7 @@ def show_selected_description(descriptions, evt: gr.SelectData):
 categories = ["All"] + sorted(books["simple_categories"].unique())
 tones = ["All"] + ["Happy", "Surprising", "Angry", "Suspenseful", "Sad"]
 
+# Define the search controls, recommendation gallery, and description panel as one Gradio app.
 # Build the search form and connect its button to the recommendation function.
 with gr.Blocks(theme=gr.Theme.from_hub("harsh8001/skymist")) as dashboard:
     gr.Markdown("# Semantic Book Recommender", elem_id="dashboard-title")
