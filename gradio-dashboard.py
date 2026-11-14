@@ -33,7 +33,7 @@ def retrieve_semantic_recommendations(
         query: str,
         category: str = None,
         tone: str = None,
-        initial_top_k: int = 200,
+        initial_top_k: int = 240,
 ) -> pd.DataFrame:
     # Use semantic similarity as the first-stage candidate search, then apply UI filters.
     # Find the nearest book vectors, then extract their ISBNs from stored document text.
