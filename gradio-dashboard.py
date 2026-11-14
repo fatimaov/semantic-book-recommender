@@ -115,6 +115,7 @@ def change_recommendation_page(direction, recommendations, page):
         recommendations[start:start + PAGE_SIZE],
         page,
         f"Page {page + 1} of {page_count}",
+        "Select a recommended book to read its full description.",
         gr.update(interactive=page > 0),
         gr.update(interactive=page < page_count - 1),
     )
@@ -174,10 +175,10 @@ with gr.Blocks(theme=gr.Theme.from_hub("harsh8001/skymist")) as dashboard:
                                    page_indicator, full_description, previous_page, next_page])
     previous_page.click(fn=lambda recommendations, page: change_recommendation_page(-1, recommendations, page),
                         inputs=[recommendations_state, page_state],
-                        outputs=[output, page_state, page_indicator, previous_page, next_page])
+                        outputs=[output, page_state, page_indicator, full_description, previous_page, next_page])
     next_page.click(fn=lambda recommendations, page: change_recommendation_page(1, recommendations, page),
                     inputs=[recommendations_state, page_state],
-                    outputs=[output, page_state, page_indicator, previous_page, next_page])
+                    outputs=[output, page_state, page_indicator, full_description, previous_page, next_page])
     output.select(fn=show_selected_description,
                   inputs=[descriptions_state, page_state],
                   outputs=full_description)
