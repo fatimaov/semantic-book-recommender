@@ -5,15 +5,18 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 
 import gradio as gr
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent
 
 # Prepare display-ready book metadata and reusable vector-search resources at startup.
 # Load the book metadata and build a larger cover URL for display.
-books = pd.read_csv("data/books_with_emotions.csv")
+books = pd.read_csv(PROJECT_ROOT / "data" / "books_with_emotions.csv")
 books["large_thumbnail"] = books["thumbnail"] + "&fife=w800"
 # Use a local placeholder when a book has no thumbnail URL.
 books["large_thumbnail"] = np.where(
     books["large_thumbnail"].isna(),
-    "cover-not-found.jpg",
+    str(PROJECT_ROOT / "cover-not-found.jpg"),
     books["large_thumbnail"],
 )
 
@@ -25,7 +28,7 @@ embeddings = HuggingFaceEmbeddings(
 # Connect to the persisted Chroma collection so the dashboard can query book vectors.
 db_books = Chroma(
     collection_name="books",
-    persist_directory="./chroma_db",
+    persist_directory=str(PROJECT_ROOT / "chroma_db"),
     embedding_function=embeddings
 )
 
