@@ -1,5 +1,5 @@
 from sqlalchemy import BigInteger, Enum as SQLAlchemyEnum, Float, Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .enums import BookCategory
 from ..extensions import db
@@ -9,6 +9,11 @@ class Book(db.Model):
     __tablename__ = "books"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    embeddings: Mapped[list["BookEmbedding"]] = relationship(
+        back_populates="book",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
     isbn13: Mapped[str | None] = mapped_column(String)
     isbn10: Mapped[str | None] = mapped_column(String)
     title: Mapped[str] = mapped_column(String, nullable=False)

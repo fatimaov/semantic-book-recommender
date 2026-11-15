@@ -1,4 +1,4 @@
 from .book import Book
-from .enums import BookCategory
+from .book_embedding import BookEmbedding
 
-__all__ = ["Book", "BookCategory"]
+__all__ = ["Book", "BookEmbedding"]
