@@ -1,13 +1,22 @@
-import pandas as pd
-import numpy as np
-
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_chroma import Chroma
-
-import gradio as gr
+import os
+from dotenv import load_dotenv
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent
+load_dotenv(PROJECT_ROOT / ".env")
+
+import pandas as pd
+import numpy as np
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
+import gradio as gr
+
+CHROMA_COLLECTION_NAME = os.getenv("CHROMA_COLLECTION_NAME", "books")
+CHROMA_PERSIST_DIRECTORY = Path(
+    os.getenv("CHROMA_PERSIST_DIRECTORY", str(PROJECT_ROOT / "chroma_db"))
+)
+if not CHROMA_PERSIST_DIRECTORY.is_absolute():
+    CHROMA_PERSIST_DIRECTORY = PROJECT_ROOT / CHROMA_PERSIST_DIRECTORY
 
 # Prepare display-ready book metadata and reusable vector-search resources at startup.
 # Load the book metadata and build a larger cover URL for display.
@@ -27,8 +36,8 @@ embeddings = HuggingFaceEmbeddings(
 
 # Connect to the persisted Chroma collection so the dashboard can query book vectors.
 db_books = Chroma(
-    collection_name="books",
-    persist_directory=str(PROJECT_ROOT / "chroma_db"),
+    collection_name=CHROMA_COLLECTION_NAME,
+    persist_directory=str(CHROMA_PERSIST_DIRECTORY),
     embedding_function=embeddings
 )
 
