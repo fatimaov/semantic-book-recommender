@@ -53,4 +53,4 @@ The separate local tutorial path uses `notebooks/vector-search.ipynb` to create 
 
 ## Learning source
 
-The tutorial foundation is [Build a Semantic Book Recommender Using an LLM and Python](https://www.freecodecamp.org/news/build-a-semantic-book-recommender-using-an-llm-and-python/). Its original README is preserved on the tutorial branch.
+The tutorial foundation is [Build a Semantic Book Recommender Using an LLM and Python](https://www.freecodecamp.org/news/build-a-semantic-book-recommender-using-an-llm-and-python/). The original tutorial app is preserved on the [`version/tutorial` branch](https://github.com/fatimaov/semantic-book-recommender/tree/version/tutorial); its README includes instructions for running the app.
