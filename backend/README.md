@@ -19,7 +19,7 @@ Python 3.11.9.
 From the repository root, activate the virtual environment and start Flask:
 
 ```bash
-source .venv/bin/activate
+source .venv/Scripts/activate
 python -m backend.run
 ```
 
