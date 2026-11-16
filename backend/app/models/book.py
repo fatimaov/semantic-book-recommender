@@ -14,7 +14,7 @@ class Book(db.Model):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
-    isbn13: Mapped[str | None] = mapped_column(String)
+    isbn13: Mapped[str | None] = mapped_column(String, unique=True)
     isbn10: Mapped[str | None] = mapped_column(String)
     title: Mapped[str] = mapped_column(String, nullable=False)
     authors: Mapped[str | None] = mapped_column(Text)
