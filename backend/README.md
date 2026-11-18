@@ -20,6 +20,7 @@ From the repository root, activate the virtual environment and start Flask:
 
 ```bash
 source .venv/Scripts/activate
+pip install -r requirements.txt
 python -m backend.run
 ```
 
@@ -54,3 +55,13 @@ curl -i http://127.0.0.1:5000/api/health
 
 An HTTP `200` response with `{"status":"ok"}` confirms the app started and
 the health route is responding.
+
+## Run tests
+
+From the repository root, install the development dependencies and run the
+backend tests with the project's virtual environment:
+
+```bash
+source .venv/Scripts/activate
+pytest backend/tests/
+```
