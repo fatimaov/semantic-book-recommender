@@ -29,6 +29,7 @@ def _sqlalchemy_database_uri(value: str | None) -> str | None:
 
 class Config:
     APP_ENV = os.getenv("APP_ENV", "production").lower()
+    SEARCH_LOGGING_ENABLED = APP_ENV == "production"
     SUPABASE_DATABASE_URL = os.getenv("SUPABASE_DATABASE_URL")
     SQLALCHEMY_DATABASE_URI = _sqlalchemy_database_uri(SUPABASE_DATABASE_URL)
     SQLALCHEMY_TRACK_MODIFICATIONS = False

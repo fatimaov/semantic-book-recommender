@@ -1,12 +1,16 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 
+from ..factories import get_retrieval_dependencies
 from ..models.enums import BookCategory
+from ..services.recommendation_service import RecommendationService
+from ..services.search_event_service import SearchEventService
 
 
 recommendations = Blueprint("recommendations", __name__, url_prefix="/api")
 
 DEFAULT_TOP_K = 250
 MAX_TOP_K = 250
+_RECOMMENDATION_SERVICE_KEY = "book_recommender_recommendation_service"
 EMOTIONS = frozenset(
     {"All", "Happy", "Surprising", "Angry", "Suspenseful", "Sad"}
 )
@@ -15,6 +19,16 @@ CATEGORIES = frozenset({"All", *(category.value for category in BookCategory)})
 
 def _error(message: str, status_code: int):
     return jsonify(error={"message": message}), status_code
+
+
+def _get_recommendation_service() -> RecommendationService:
+    app = current_app._get_current_object()
+    service = app.extensions.get(_RECOMMENDATION_SERVICE_KEY)
+    if service is None:
+        provider, book_repository = get_retrieval_dependencies(app)
+        service = RecommendationService(provider, book_repository)
+        app.extensions[_RECOMMENDATION_SERVICE_KEY] = service
+    return service
 
 
 @recommendations.post("/recommendations")
@@ -50,6 +64,25 @@ def create_recommendations():
             400,
         )
 
-    # The API contract is available now; the recommendation service will be
-    # connected in the next implementation step.
-    return _error("Recommendation service is not implemented yet.", 501)
+    if current_app.config.get("SEARCH_LOGGING_ENABLED", False):
+        try:
+            SearchEventService().log_search(
+                query=query.strip(),
+                category=category,
+                emotion=emotion,
+            )
+        except Exception:
+            current_app.logger.exception("Search analytics logging failed.")
+
+    try:
+        books = _get_recommendation_service().recommend(
+            query=query,
+            category=category,
+            emotion=emotion,
+            top_k=top_k,
+        )
+    except Exception:
+        current_app.logger.exception("Recommendation request failed.")
+        return _error("Recommendations are temporarily unavailable.", 503)
+
+    return jsonify(recommendations=books, total=len(books)), 200
