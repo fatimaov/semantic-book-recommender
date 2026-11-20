@@ -1,8 +1,13 @@
 from flask import Blueprint, current_app, jsonify, request
+from chromadb.errors import ChromaError
+from google.genai.errors import APIError as GeminiAPIError
+from httpx import HTTPError as HttpClientError
+from langchain_google_genai._common import GoogleGenerativeAIError
+from sqlalchemy.exc import SQLAlchemyError
 
 from ..factories import get_retrieval_dependencies
 from ..models.enums import BookCategory
-from ..services.recommendation_service import RecommendationService
+from ..services.recommendation_service import RecommendationService, SUPPORTED_TONES
 from ..services.search_event_service import SearchEventService
 
 
@@ -11,10 +16,21 @@ recommendations = Blueprint("recommendations", __name__, url_prefix="/api")
 DEFAULT_TOP_K = 250
 MAX_TOP_K = 250
 _RECOMMENDATION_SERVICE_KEY = "book_recommender_recommendation_service"
-EMOTIONS = frozenset(
-    {"All", "Happy", "Surprising", "Angry", "Suspenseful", "Sad"}
+API_EMOTIONS = frozenset(
+    {"All", "Anger", "Disgust", "Fear", "Joy", "Sadness", "Surprise", "Neutral"}
 )
+EMOTIONS = API_EMOTIONS | SUPPORTED_TONES
 CATEGORIES = frozenset({"All", *(category.value for category in BookCategory)})
+DEPENDENCY_ERRORS = (
+    ChromaError,
+    GeminiAPIError,
+    GoogleGenerativeAIError,
+    HttpClientError,
+    SQLAlchemyError,
+    ConnectionError,
+    TimeoutError,
+    OSError,
+)
 
 
 def _error(message: str, status_code: int):
@@ -34,7 +50,7 @@ def _get_recommendation_service() -> RecommendationService:
 @recommendations.post("/recommendations")
 def create_recommendations():
     if not request.is_json:
-        return _error("Content-Type must be application/json.", 415)
+        return _error("Content-Type must be application/json.", 400)
 
     payload = request.get_json(silent=True)
     if not isinstance(payload, dict):
@@ -59,8 +75,7 @@ def create_recommendations():
     emotion = payload.get("emotion", "All")
     if not isinstance(emotion, str) or emotion not in EMOTIONS:
         return _error(
-            "'emotion' must be 'All', 'Happy', 'Surprising', 'Angry', "
-            "'Suspenseful', or 'Sad'.",
+            "'emotion' must be 'All' or a supported emotion or tone label.",
             400,
         )
 
@@ -81,8 +96,12 @@ def create_recommendations():
             emotion=emotion,
             top_k=top_k,
         )
-    except Exception:
+        response = jsonify(recommendations=books, total=len(books))
+    except DEPENDENCY_ERRORS:
         current_app.logger.exception("Recommendation request failed.")
         return _error("Recommendations are temporarily unavailable.", 503)
+    except Exception:
+        current_app.logger.exception("Unexpected recommendation request failure.")
+        return _error("An unexpected error occurred.", 500)
 
-    return jsonify(recommendations=books, total=len(books)), 200
+    return response, 200

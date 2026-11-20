@@ -11,6 +11,13 @@ TONE_SCORE_FIELDS = {
     "Angry": "anger",
     "Suspenseful": "fear",
     "Sad": "sadness",
+    "Anger": "anger",
+    "Disgust": "disgust",
+    "Fear": "fear",
+    "Joy": "joy",
+    "Sadness": "sadness",
+    "Surprise": "surprise",
+    "Neutral": "neutral",
 }
 SUPPORTED_TONES = frozenset({"All", *TONE_SCORE_FIELDS})
 

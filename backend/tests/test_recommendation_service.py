@@ -62,6 +62,13 @@ def test_category_filter_preserves_semantic_order(retrieval):
         ("Angry", "anger"),
         ("Suspenseful", "fear"),
         ("Sad", "sadness"),
+        ("Anger", "anger"),
+        ("Disgust", "disgust"),
+        ("Fear", "fear"),
+        ("Joy", "joy"),
+        ("Sadness", "sadness"),
+        ("Surprise", "surprise"),
+        ("Neutral", "neutral"),
     ],
 )
 def test_selected_tone_ranks_by_matching_score_and_puts_missing_scores_last(
@@ -121,7 +128,7 @@ def test_handles_empty_or_short_candidate_lists(retrieval, candidates):
         ({"query": "  "}, "query must be a non-empty string"),
         ({"query": "query", "top_k": 0}, "top_k must be a positive integer"),
         ({"query": "query", "limit": 0}, "limit must be a positive integer"),
-        ({"query": "query", "emotion": "Joy"}, "emotion must be 'All'"),
+        ({"query": "query", "emotion": "Excited"}, "emotion must be 'All'"),
     ],
 )
 def test_rejects_invalid_service_arguments(retrieval, kwargs, message):
