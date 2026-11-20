@@ -24,11 +24,12 @@ Tutorial notebooks ──> cleaned CSV ──> Supabase books
        │                                  │
        └──> Chroma ──> Gradio             └──> Gemini embeddings ──> pgvector search
 
-Planned app: frontend ──> Flask API ──> catalogue and semantic search
+Implemented API: Flask API ──> environment-selected semantic recommendations
+Next: frontend integration ──> Flask API
 ```
 
-- **Implemented:** tutorial analysis and local Chroma/Gradio workflow; CSV import and resumable Gemini embedding notebooks; database groundwork for the extended app.
-- **Planned:** recommendation API, frontend, and user-facing discovery features.
+- **Implemented:** tutorial analysis and local Chroma/Gradio workflow; CSV import and resumable Gemini embedding notebooks; Flask recommendation API with environment-selected retrieval and production search logging.
+- **Planned:** frontend integration and user-facing discovery features.
 - Gemini embedding ingestion currently processes up to 800 books per run and can resume in later runs.
 
 ## Notebook workflow
@@ -45,7 +46,7 @@ The separate local tutorial path uses `notebooks/vector-search.ipynb` to create 
 
 ## Repository map
 
-- `backend/` — Flask application and database groundwork. See [`backend/README.md`](backend/README.md) for backend setup, configuration, endpoint, and migration instructions.
+- `backend/` — Flask recommendation API, retrieval services, and database migrations. See [`backend/README.md`](backend/README.md) for backend setup, configuration, endpoint, and migration instructions.
 - `notebooks/` — data preparation, local search, and Supabase ingestion workflows.
 - `gradio-dashboard.py` — tutorial dashboard.
 - `requirements.txt`, `.env.example` — dependencies and configuration template.
