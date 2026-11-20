@@ -8,7 +8,7 @@ recommendations = Blueprint("recommendations", __name__, url_prefix="/api")
 DEFAULT_TOP_K = 250
 MAX_TOP_K = 250
 EMOTIONS = frozenset(
-    {"All", "Anger", "Disgust", "Fear", "Joy", "Sadness", "Surprise", "Neutral"}
+    {"All", "Happy", "Surprising", "Angry", "Suspenseful", "Sad"}
 )
 CATEGORIES = frozenset({"All", *(category.value for category in BookCategory)})
 
@@ -45,7 +45,9 @@ def create_recommendations():
     emotion = payload.get("emotion", "All")
     if not isinstance(emotion, str) or emotion not in EMOTIONS:
         return _error(
-            "'emotion' must be 'All' or one of the seven supported emotions.", 400
+            "'emotion' must be 'All', 'Happy', 'Surprising', 'Angry', "
+            "'Suspenseful', or 'Sad'.",
+            400,
         )
 
     # The API contract is available now; the recommendation service will be
