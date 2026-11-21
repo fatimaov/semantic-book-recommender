@@ -3,6 +3,10 @@
 The Flask backend exposes a health check and semantic book recommendations.
 See the root README for the project overview and data preparation workflow.
 
+## Deployed API
+
+The backend app is deployed on Render. Visit the [interactive API documentation](https://semantic-book-recommender-4tbl.onrender.com/api/docs/). The backend runs on Render's free tier, so its first request may take 30–60 seconds.
+
 ## Configuration
 
 Create a root `.env` file from `.env.example` and set `APP_ENV`:

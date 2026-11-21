@@ -17,6 +17,10 @@ A learning project evolving from a semantic-search tutorial into a full stack bo
 - **Application:** Flask API, Gradio tutorial dashboard
 - **Database and migrations:** PostgreSQL, SQLAlchemy, Flask-Migrate
 
+## Deployed backend
+
+The Flask API is deployed on Render. Open the [API documentation](https://semantic-book-recommender-4tbl.onrender.com/api/docs/) to explore its endpoints. The backend runs on Render's free tier, so its first request may take 30–60 seconds.
+
 ## Architecture and progress
 
 ```text
