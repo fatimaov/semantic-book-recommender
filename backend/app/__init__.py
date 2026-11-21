@@ -3,7 +3,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 
 from . import models
 from .config import Config
-from .extensions import cors, db, migrate
+from .extensions import db, migrate
 from .routes.openapi import openapi
 from .routes import blueprints
 
@@ -19,7 +19,6 @@ def create_app(test_config: dict | None = None) -> Flask:
 
     db.init_app(app)
     migrate.init_app(app, db)
-    cors.init_app(app)
     for blueprint in blueprints:
         app.register_blueprint(blueprint)
     app.register_blueprint(openapi)
