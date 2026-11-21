@@ -46,13 +46,13 @@ To prepare data for Supabase, run these tutorial notebooks in order:
 4. `notebooks/csv-data-ingestion.ipynb` — imports the resulting `books_with_emotions.csv` into Supabase.
 5. `notebooks/gemini_book_embeddings_ingestion.ipynb` — creates document embeddings and demonstrates query embedding and pgvector search.
 
-The separate local tutorial path uses `notebooks/vector-search.ipynb` to create or reuse the Chroma collection, then `gradio-dashboard.py` to run the dashboard. Generated `data/` files and the local `chroma_db/` collection are git-ignored.
+For local semantic recommendations, `notebooks/vector-search.ipynb` can create or reuse the Chroma collection used by Flask when `APP_ENV=local`. Start Flask as described in [`backend/README.md`](backend/README.md), then run the API-backed Gradio frontend from `frontend/app.py`. Generated `data/` files and the local `chroma_db/` collection are git-ignored.
 
 ## Repository map
 
 - `backend/` — Flask recommendation API, retrieval services, and database migrations. See [`backend/README.md`](backend/README.md) for backend setup, configuration, endpoint, and migration instructions.
+- `frontend/` — Gradio interface and Flask API client. See [`frontend/README.md`](frontend/README.md) for frontend setup.
 - `notebooks/` — data preparation, local search, and Supabase ingestion workflows.
-- `gradio-dashboard.py` — tutorial dashboard.
 - `requirements.txt`, `.env.example` — dependencies and configuration template.
 - `semantic-book-recommender_demo.gif`, `cover-not-found.jpg` — dashboard demo and fallback cover.
 

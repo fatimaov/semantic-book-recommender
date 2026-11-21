@@ -8,10 +8,10 @@ will handle user input and presentation.
 
 | Path | Purpose |
 | --- | --- |
-| `app.py` | Gradio application entry point (not wired up yet) |
-| `config.py` | Frontend configuration (to be filled in as integration continues) |
+| `app.py` | Gradio application and Flask API event handlers |
+| `config.py` | Gallery page size, category and tone choices, and asset paths |
 | `services/recommendation_api.py` | Calls the Flask recommendations endpoint |
-| `utils/gallery_formatter.py` | Gallery presentation helpers (to be implemented) |
+| `utils/gallery_formatter.py` | Gallery captions, descriptions, and missing-cover fallback |
 | `assets/cover_not_found.png` | Placeholder cover image |
 | `tests/test_recommendation_api.py` | Unit tests for the API client |
 
@@ -41,6 +41,19 @@ invalid responses. The request uses a 5-second connection timeout and a
 See the [backend README](../backend/README.md) for the full API contract and
 instructions for starting Flask locally.
 
+## Start the frontend
+
+Start the Flask backend in a separate terminal as described in the
+[backend README](../backend/README.md), then run Gradio from the repository
+root:
+
+```bash
+./.venv/Scripts/python.exe -m frontend.app
+```
+
+The frontend listens on Gradio's default local address. Its recommendation
+requests go to the URL configured in `FLASK_API_URL`.
+
 ## Tests
 
 From the repository root, run the frontend unit tests with the project
@@ -49,6 +62,3 @@ interpreter:
 ```bash
 ./.venv/Scripts/python.exe -m pytest frontend/tests/
 ```
-
-The Gradio UI is not connected to the API client yet, so the frontend app is not
-ready to launch. The API client can be developed and tested independently.
