@@ -4,12 +4,14 @@ flask-cors==6.0.5
 Flask-Migrate==4.1.0
 Flask-SQLAlchemy==3.1.1
 flask-swagger-ui==5.35.0
+gradio==6.31.0
 google-genai==3.3.0
 gunicorn==27.0.1
 httpx==0.28.1
 langchain-chroma==1.1.0
 langchain-google-genai==4.5.0
 langchain-huggingface==1.2.3
+numpy==2.4.6
 pandas==3.1.1
 pgvector==0.5.1
 psycopg[binary]==3.3.9
