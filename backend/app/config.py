@@ -28,6 +28,7 @@ def _sqlalchemy_database_uri(value: str | None) -> str | None:
 
 
 class Config:
+    SECRET_KEY = os.getenv("SECRET_KEY")
     APP_ENV = os.getenv("APP_ENV", "production").lower()
     SEARCH_LOGGING_ENABLED = APP_ENV == "production"
     SUPABASE_DATABASE_URL = os.getenv("SUPABASE_DATABASE_URL")
