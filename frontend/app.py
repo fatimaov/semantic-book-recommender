@@ -1,5 +1,7 @@
 """Gradio interface for the Flask book recommendation API."""
 
+import os
+
 import gradio as gr
 
 from frontend.config import CATEGORY_CHOICES, PAGE_SIZE, TONE_CHOICES
@@ -84,7 +86,7 @@ def show_selected_description(descriptions: list[str], page: int, event: gr.Sele
     return descriptions[index] or NO_DESCRIPTION
 
 
-with gr.Blocks(theme=gr.Theme.from_hub("harsh8001/skymist")) as dashboard:
+with gr.Blocks(theme=gr.Theme.from_hub("harsh8001/skymist")) as demo:
     gr.Markdown("# Semantic Book Recommender", elem_id="dashboard-title")
 
     user_query = gr.Textbox(
@@ -181,7 +183,9 @@ with gr.Blocks(theme=gr.Theme.from_hub("harsh8001/skymist")) as dashboard:
 
 
 if __name__ == "__main__":
-    dashboard.launch(
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=int(os.environ.get("PORT", 7860)),
         css="""
         #dashboard-title {
             margin: 2rem 0 2.5rem;
