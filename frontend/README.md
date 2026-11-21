@@ -36,7 +36,8 @@ source.
 to `POST /api/recommendations`. It returns the validated list of book records
 and raises `RecommendationAPIError` for network failures, HTTP errors, and
 invalid responses. The request uses a 5-second connection timeout and a
-60-second response timeout.
+60-second response timeout. Flask returns up to 240 results; the gallery shows
+16 per page, allowing up to 15 pages of recommendations.
 
 See the [backend README](../backend/README.md) for the full API contract and
 instructions for starting Flask locally.

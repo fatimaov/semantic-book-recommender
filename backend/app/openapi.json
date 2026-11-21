@@ -46,7 +46,7 @@
       "post": {
         "tags": ["Recommendations"],
         "summary": "Get book recommendations",
-        "description": "Searches for books similar to the query and optionally filters or ranks them by category and emotion or tone. The response contains at most 16 recommendations.",
+        "description": "Searches for books similar to the query and optionally filters or ranks them by category and emotion or tone. The response contains at most 240 recommendations.",
         "operationId": "createRecommendations",
         "requestBody": {
           "required": true,
@@ -149,7 +149,7 @@
         "properties": {
           "recommendations": {
             "type": "array",
-            "maxItems": 16,
+            "maxItems": 240,
             "items": {"$ref": "#/components/schemas/BookRecommendation"}
           },
           "total": {

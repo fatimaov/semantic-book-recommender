@@ -184,13 +184,15 @@ def test_accepts_each_supported_emotion(client_factory, monkeypatch, emotion):
     )
 
 
-def test_endpoint_returns_no_more_than_16_recommendations(
+def test_endpoint_returns_no_more_than_240_recommendations(
     client_factory, monkeypatch
 ):
     provider = Mock()
     provider.embed_query.return_value = [0.0] * 768
     repository = Mock()
-    repository.search_similar.return_value = [_book(str(index)) for index in range(30)]
+    repository.search_similar.return_value = [
+        _book(str(index)) for index in range(300)
+    ]
     monkeypatch.setattr(
         recommendations_module,
         "get_retrieval_dependencies",
@@ -200,8 +202,8 @@ def test_endpoint_returns_no_more_than_16_recommendations(
     response = client_factory().post("/api/recommendations", json={"query": "query"})
 
     assert response.status_code == 200
-    assert response.get_json()["total"] == 16
-    assert len(response.get_json()["recommendations"]) == 16
+    assert response.get_json()["total"] == 240
+    assert len(response.get_json()["recommendations"]) == 240
     repository.search_similar.assert_called_once_with(
         query_vector=[0.0] * 768,
         top_k=250,

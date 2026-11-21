@@ -4,7 +4,7 @@ from typing import Any
 
 
 DEFAULT_TOP_K = 250
-DEFAULT_LIMIT = 16
+DEFAULT_LIMIT = 240
 TONE_SCORE_FIELDS = {
     "Happy": "joy",
     "Surprising": "surprise",

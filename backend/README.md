@@ -81,8 +81,9 @@ curl -X POST http://127.0.0.1:5000/api/recommendations \
   -d '{"query":"A story about friendship and adventure","top_k":50,"category":"Fiction","emotion":"Happy"}'
 ```
 
-The response has the form `{"recommendations": [...], "total": 1}`. Each
-recommendation includes `isbn13`, `title_and_subtitle`, `authors`, `thumbnail`,
+The response has the form `{"recommendations": [...], "total": 1}` and contains
+up to 240 recommendations from the retrieved candidates. Each recommendation
+includes `isbn13`, `title_and_subtitle`, `authors`, `thumbnail`,
 `description`, `simple_categories`, `published_year`, `average_rating`, the
 seven emotion scores, and `similarity_score`. A search with no matches returns
 HTTP 200 with an empty recommendation list.
