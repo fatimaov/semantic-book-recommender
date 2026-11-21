@@ -37,6 +37,13 @@ python -m backend.run
 
 The API runs at `http://127.0.0.1:5000`.
 
+## API documentation
+
+The interactive Swagger UI is available at
+`http://127.0.0.1:5000/api/docs/`. The OpenAPI 3.0.3 document is served at
+`http://127.0.0.1:5000/api/openapi.json` and describes the health and
+recommendations endpoints, request fields, response schemas, and error codes.
+
 ## Endpoints
 
 ### Health
