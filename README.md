@@ -1,6 +1,6 @@
 # Semantic Book Recommender
 
-A learning project evolving from a semantic-search tutorial into a full stack book discovery app. The extended app aims to combine natural-language recommendations with catalogue browsing, book details, and favorites. The app experience is still in development.
+A learning project evolving from a semantic-search tutorial into a book discovery app. It currently provides natural-language recommendations through a Gradio frontend and Flask API. Catalogue browsing, book details, and favorites remain future product work.
 
 ## Product direction
 
@@ -14,26 +14,25 @@ A learning project evolving from a semantic-search tutorial into a full stack bo
 - **Language and analysis:** Python, Pandas, Jupyter
 - **NLP and embeddings:** Hugging Face Transformers, Sentence Transformers, Gemini embeddings
 - **Vector search:** Chroma (local), PostgreSQL with pgvector (Supabase)
-- **Application:** Flask API, Gradio tutorial dashboard
+- **Application:** Flask REST API and Gradio frontend client
 - **Database and migrations:** PostgreSQL, SQLAlchemy, Flask-Migrate
 
-## Deployed backend
+## Deployed apps
 
-The Flask API is deployed on Render. Open the [API documentation](https://semantic-book-recommender-4tbl.onrender.com/api/docs/) to explore its endpoints. The backend runs on Render's free tier, so its first request may take 30–60 seconds.
+- **Gradio frontend:** [Open the book recommender](https://client-semantic-book-recommender.onrender.com/).
+- **Flask API:** Open the [API documentation](https://semantic-book-recommender-4tbl.onrender.com/api/docs/) to explore its endpoints. The backend runs on Render's free tier, so its first request may take 30–60 seconds.
 
 ## Architecture and progress
 
 ```text
-Tutorial notebooks ──> cleaned CSV ──> Supabase books
-       │                                  │
-       └──> Chroma ──> Gradio             └──> Gemini embeddings ──> pgvector search
+Gradio frontend ──> Flask REST API ──┬── APP_ENV=local ──> Hugging Face + Chroma
+                                     └── APP_ENV=production ──> Gemini + Supabase pgvector
 
-Implemented API: Flask API ──> environment-selected semantic recommendations
-Next: frontend integration ──> Flask API
+Tutorial notebooks ──> prepared book data and embeddings for the selected backend
 ```
 
-- **Implemented:** tutorial analysis and local Chroma/Gradio workflow; CSV import and resumable Gemini embedding notebooks; Flask recommendation API with environment-selected retrieval and production search logging.
-- **Planned:** frontend integration and user-facing discovery features.
+- **Implemented:** Flask recommendation API with environment-selected retrieval, category and emotion filtering, and up to 240 results; Gradio frontend with 16 results per page; notebook workflows for data preparation and embedding ingestion.
+- **Planned:** catalogue browsing, book details, and favorites.
 - Gemini embedding ingestion currently processes up to 800 books per run and can resume in later runs.
 
 ## Notebook workflow
@@ -46,7 +45,7 @@ To prepare data for Supabase, run these tutorial notebooks in order:
 4. `notebooks/csv-data-ingestion.ipynb` — imports the resulting `books_with_emotions.csv` into Supabase.
 5. `notebooks/gemini_book_embeddings_ingestion.ipynb` — creates document embeddings and demonstrates query embedding and pgvector search.
 
-For local semantic recommendations, `notebooks/vector-search.ipynb` can create or reuse the Chroma collection used by Flask when `APP_ENV=local`. Start Flask as described in [`backend/README.md`](backend/README.md), then run the API-backed Gradio frontend from `frontend/app.py`. Generated `data/` files and the local `chroma_db/` collection are git-ignored.
+For local semantic recommendations, `notebooks/vector-search.ipynb` can create or reuse the Chroma collection used by Flask when `APP_ENV=local`. Set `FLASK_API_URL=http://127.0.0.1:5000` in the root `.env`, start Flask as described in [`backend/README.md`](backend/README.md), then run `./.venv/Scripts/python.exe -m frontend.app` from the repository root. Generated `data/` files and the local `chroma_db/` collection are git-ignored.
 
 ## Repository map
 
@@ -54,7 +53,7 @@ For local semantic recommendations, `notebooks/vector-search.ipynb` can create o
 - `frontend/` — Gradio interface and Flask API client. See [`frontend/README.md`](frontend/README.md) for frontend setup.
 - `notebooks/` — data preparation, local search, and Supabase ingestion workflows.
 - `requirements.txt`, `.env.example` — dependencies and configuration template.
-- `semantic-book-recommender_demo.gif`, `cover-not-found.jpg` — dashboard demo and fallback cover.
+- `semantic-book-recommender_demo.gif`, `cover-not-found.jpg` — project demo and source fallback cover.
 
 ## Learning source
 

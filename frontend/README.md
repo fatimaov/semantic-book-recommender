@@ -1,8 +1,13 @@
 # Gradio Frontend
 
-The frontend is being refactored into a lightweight Gradio client for the Flask
-API. Recommendation retrieval, filtering, and ranking stay in Flask; Gradio
-will handle user input and presentation.
+The Gradio frontend is a lightweight client for the Flask API. Recommendation
+retrieval, filtering, and ranking stay in Flask; Gradio handles user input and
+presentation.
+
+## Deployed frontend
+
+The Gradio app is deployed on Render: [Open the book recommender](https://client-semantic-book-recommender.onrender.com/).
+Its requests go to the Flask API configured by `FLASK_API_URL`.
 
 ## Structure
 
